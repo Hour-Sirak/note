@@ -1,14 +1,12 @@
 <script setup lang="ts">
-import { ref } from 'vue';
-
-const a = ref
+import Header from './components/Header.vue';
+import Todos from './components/Todos.vue';
 </script>
 
 <template>
-  <header>
-  </header>
+  <Header />
   <main>
-    <p class="text-blue-200">Hello world</p>
+    <Todos />
   </main>
 </template>
 
