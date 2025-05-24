@@ -2,6 +2,7 @@
 import { ref, useTemplateRef } from 'vue';
 import EditableDiv from './EditableDiv.vue';
 import type { Note } from '@/types';
+import { computed } from '@vue/reactivity';
 
 
 const props = defineProps<{
@@ -13,17 +14,26 @@ const content = ref(props.note?.content);
 
 const contentEditable = useTemplateRef('contentEditable');
 
-const emit = defineEmits(['save', 'delete']);
+const emit = defineEmits(['save', 'update', 'delete']);
 const isSubmitting = ref(false);
 const isDeleting = ref(false);
 
-const handleSubmit = async () => {
-  if (isSubmitting.value) {
-    return;
+const formChanged = computed(() => {
+  if(!props.note) {
+    return true;
   }
+  return title.value !== props.note?.title || content.value !== props.note?.content;
+});
 
-  isSubmitting.value = true;
+function validateForm() {
+  if (!title.value) {
+    alert('Title cannot be empty');
+    return false;
+  }
+  return true;
+}
 
+async function createNote() {
   try {
     const response = await fetch('https://jsonplaceholder.typicode.com/posts', {
       method: 'POST',
@@ -43,6 +53,50 @@ const handleSubmit = async () => {
   } catch (error) {
     console.error('Error creating note:', error)
   }
+};
+
+async function updateNote() {
+  try {
+    const response = await fetch('https://jsonplaceholder.typicode.com/posts/1', {
+      method: 'PATCH',
+      body: JSON.stringify({
+        title: title.value,
+        body: content.value,
+      }),
+      headers: {
+        'Content-type': 'application/json; charset=UTF-8',
+      },
+    })
+    const data = await response.json();
+    emit('update', {
+      id: props.note?.id,
+      title: data.title,
+      content: data.body,
+      created_at: '2023-10-01',
+      updated_at: new Date().toISOString().slice(0, 10)
+    });
+  }
+  catch (error) {
+    console.error('Error updating note:', error);
+  }
+};
+
+async function handleSubmit() {
+  if (!validateForm()) {
+    return;
+  }
+
+  if (isSubmitting.value) {
+    return;
+  }
+
+  isSubmitting.value = true;
+
+  if (props.note) {
+    await updateNote();
+  } else {
+    await createNote();
+  }
 
   isSubmitting.value = false;
 };
@@ -54,8 +108,9 @@ async function handleDelete(id?: String) {
     const confirmToDelete = window.confirm('Are you sure you want to delete this note?')
     if (!confirmToDelete) return
   }
-  
+
   isDeleting.value = true;
+
   if (!id) {
     emit('delete');
     isDeleting.value = false;
@@ -78,11 +133,10 @@ async function handleDelete(id?: String) {
 
 <template>
   <div class="flex flex-col gap-5 justify-between h-full p-4 relative">
-    <form @submit.prevent="handleSubmit" class="h-full grid grid-rows-[auto_1fr]">
+    <form @submit.prevent="handleSubmit" class="h-full">
       <!-- title -->
       <input v-model="title" @keydown.enter.prevent="contentEditable?.element?.focus()"
-        class="text-xl font-medium outline-none mb-2" placeholder="Title" />
-      
+        class="text-xl font-medium outline-none mb-2 w-full" placeholder="Title" />
       <!-- content -->
       <EditableDiv ref="contentEditable" v-model="content" placeholder="take a note..." />
     </form>
@@ -94,7 +148,7 @@ async function handleDelete(id?: String) {
     </div>
 
     <!-- save button -->
-    <button type="button" class="button absolute bottom-4 right-11 text-pink-500" @click="handleSubmit"
+    <button v-if="formChanged" type="button" class="button absolute bottom-4 right-11 text-pink-500" @click="handleSubmit"
       :disabled="isSubmitting">
       <svg v-if="isSubmitting" class="size-4 animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none"
         viewBox="0 0 24 24">

@@ -36,5 +36,5 @@ defineExpose({
 </script>
 
 <template>
-  <div contenteditable="true" ref="editableElement" @input="onInput" class="outline-none" :placeholder="placeholder"></div>
+  <span contenteditable="true" ref="editableElement" @input="onInput" class="outline-none inline-block w-full h-[70%]" :placeholder="placeholder"></span>
 </template>

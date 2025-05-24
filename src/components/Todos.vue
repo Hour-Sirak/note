@@ -21,23 +21,21 @@ onMounted(async () => {
 })
 
 async function deleteNote(id?: String) {
-  // If no id is provided, it means we are removing the null note from local state
   if (!id) {
     notes.value = notes.value.filter(note => note !== null)
     return
   }
-
   notes.value = notes.value.filter(note => note?.id !== id)
 }
 
 async function saveNote(note: Note) {
-  console.log('new note', note)
-  try {
-    deleteNote() // remove the null note
-    notes.value = [note, ...notes.value]
-  } catch (error) {
-    console.error('Error creating note:', error)
-  }
+  deleteNote() // remove the null note
+  notes.value = [note, ...notes.value]
+}
+
+async function updateNote(note: Note) {
+  const idx = notes.value.findIndex(n => n?.id === note.id)
+  notes.value[idx] = note
 }
 </script>
 
@@ -48,9 +46,7 @@ async function saveNote(note: Note) {
     </button>
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
       <div v-for="note in notes" :key="note?.id" class="rounded shadow min-h-40">
-        <!-- <Todo v-if="note" :note="note" />
-        <Todo v-else /> -->
-        <Todo :note="note" @delete="deleteNote(note?.id)" @save="saveNote" />
+        <Todo :note="note" @delete="deleteNote(note?.id)" @save="saveNote" @update="updateNote"/>
       </div>
     </div>
   </div>
