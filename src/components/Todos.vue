@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import type { Note } from '@/types';
 import { onMounted, ref } from 'vue';
+import Todo from './Todo.vue';
 
-const notes = ref<Note[]>([])
+const notes = ref<(Note | null)[]>([])
 
 onMounted(async () => {
-  const response = await fetch('https://jsonplaceholder.typicode.com/posts?limit=10')
+  const response = await fetch('https://jsonplaceholder.typicode.com/posts')
   const data = await response.json()
 
   notes.value = data.map((note: any) => {
@@ -18,18 +19,38 @@ onMounted(async () => {
     }
   }).slice(0, 5)
 })
+
+async function deleteNote(id?: String) {
+  // If no id is provided, it means we are removing the null note from local state
+  if (!id) {
+    notes.value = notes.value.filter(note => note !== null)
+    return
+  }
+
+  notes.value = notes.value.filter(note => note?.id !== id)
+}
+
+async function saveNote(note: Note) {
+  console.log('new note', note)
+  try {
+    deleteNote() // remove the null note
+    notes.value = [note, ...notes.value]
+  } catch (error) {
+    console.error('Error creating note:', error)
+  }
+}
 </script>
 
 <template>
-  <div class="container mx-auto">
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
-      <div v-for="note in notes" :key="note.id" class="bg-sky p-4 flex flex-col gap-3 rounded shadow">
-        <h3 class="text-xl font-normal">{{ note.title }}</h3>
-        <p>{{ note.content }}</p>
-        <div>
-          <p class="text-gray-500 text-sm">Created at: {{ note.created_at }}</p>
-          <p class="text-gray-500 text-sm">Updated at: {{ note.updated_at }}</p>
-        </div>
+  <div class="mt-4">
+    <button type="button" class="hover:cursor-pointer" @click="!notes.includes(null) ? notes = [null, ...notes] : null">
+      <i class="fa-regular fa-square-plus text-2xl text-pink-500"></i>
+    </button>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div v-for="note in notes" :key="note?.id" class="rounded shadow min-h-40">
+        <!-- <Todo v-if="note" :note="note" />
+        <Todo v-else /> -->
+        <Todo :note="note" @delete="deleteNote(note?.id)" @save="saveNote" />
       </div>
     </div>
   </div>

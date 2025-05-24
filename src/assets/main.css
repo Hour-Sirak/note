@@ -1,5 +1,9 @@
 @import './base.css';
 
+:root {
+  --placeholder-color: rgba(0, 0, 0, 0.5);
+}
+
 #app {
   max-width: 1280px;
   margin: 0 auto;
@@ -19,4 +23,15 @@ a,
   a:hover {
     background-color: hsla(160, 100%, 37%, 0.2);
   }
+}
+
+[contenteditable=true]:empty:before{
+  content: attr(placeholder);
+  pointer-events: none;
+  display: block; /* For Firefox */
+  color: var(--placeholder-color);
+}
+
+::placeholder {
+  color: var(--placeholder-color);
 }
