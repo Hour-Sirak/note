@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { Note } from '@/types';
-import { onMounted, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import Todo from './Todo.vue';
 
 const notes = ref<(Note | null)[]>([])
@@ -44,8 +44,8 @@ async function updateNote(note: Note) {
     <button type="button" class="hover:cursor-pointer" @click="!notes.includes(null) ? notes = [null, ...notes] : null">
       <i class="fa-regular fa-square-plus text-2xl text-pink-500"></i>
     </button>
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-      <div v-for="note in notes" :key="note?.id" class="rounded shadow min-h-40">
+    <div class="flex flex-col gap-4">
+      <div v-for="note in notes" :key="note?.id" class="grid rounded shadow relative">
         <Todo :note="note" @delete="deleteNote(note?.id)" @save="saveNote" @update="updateNote"/>
       </div>
     </div>
