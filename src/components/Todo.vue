@@ -174,7 +174,7 @@ watch(showDetail, (newValue) => {
         </button>
 
         <!-- delete button -->
-        <button type="button" class="button text-pink-500" @click="handleDelete(note?.id)">
+        <button type="button" class="button text-pink-500" @click.stop="handleDelete(note?.id)">
           <svg v-if="isDeleting" class="size-4 animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none"
             viewBox="0 0 24 24">
             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
