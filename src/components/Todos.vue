@@ -11,15 +11,7 @@ onMounted(async () => {
   const response = await fetch(config.apiUrl)
   const data = await response.json()
 
-  notes.value = data.map((note: any) => {
-    return {
-      id: note.id,
-      title: note.title,
-      content: note.body,
-      createAt: '2023-10-01',
-      updatedAt: '2024-05-11',
-    }
-  }).slice(0, 5)
+  notes.value = data
 })
 
 async function deleteNote(id?: String) {

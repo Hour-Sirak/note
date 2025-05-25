@@ -50,7 +50,7 @@ async function createNote() {
       id: data.id,
       title: data.title,
       content: data.body,
-      createAt: '2023-10-01',
+      createdAt: '2023-10-01',
       updatedAt: null,
     };  
     emit('save', createdNote);
@@ -76,7 +76,7 @@ async function updateNote(id: string) {
       id: id,
       title: data.title,
       content: data.body,
-      createAt: '2023-10-01',
+      createdAt: '2023-10-01',
       updatedAt: new Date().toISOString().slice(0, 10)
     }
     emit('update', updatedNote);
@@ -148,8 +148,8 @@ async function handleDelete(id?: String) {
         <input v-model="title" @keydown.enter.prevent="contentEditable?.element?.focus()"
           class="text-xl font-medium outline-none mb-2 flex-1" placeholder="Title" />
         
-        <!-- createAt -->
-        <p v-if="note" class="text-gray-600 text-sm">{{ note.createAt }} <i class="fa-regular fa-calendar-plus"></i>
+        <!-- createdAt -->
+        <p v-if="note" class="text-gray-600 text-sm">{{ note.createdAt }} <i class="fa-regular fa-calendar-plus"></i>
         </p>
       </div>
       <!-- content -->
