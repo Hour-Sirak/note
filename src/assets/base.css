@@ -2,7 +2,7 @@
 
 @layer components {
   .button {
-    @apply inline-flex shrink-0 rounded ring ring-pink-200 bg-pink-100 p-1 hover:bg-pink-50;
+    @apply inline-flex justify-center items-center shrink-0 rounded ring ring-pink-200 bg-pink-100 p-1 hover:bg-pink-50;
     /* Add any other specific styles here */
   }
 }
