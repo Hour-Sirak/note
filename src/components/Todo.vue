@@ -43,17 +43,10 @@ async function createNote() {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ title: title.value, body: content.value, userId: 1 }),
+      body: JSON.stringify({ title: title.value, content: content.value }),
     });
     const data = await response.json();
-    const createdNote =  {
-      id: data.id,
-      title: data.title,
-      content: data.body,
-      createdAt: '2023-10-01',
-      updatedAt: null,
-    };  
-    emit('save', createdNote);
+    emit('save', data);
   } catch (error) {
     console.error('Error creating note:', error)
   }
@@ -65,21 +58,14 @@ async function updateNote(id: string) {
       method: 'PATCH',
       body: JSON.stringify({
         title: title.value,
-        body: content.value,
+        content: content.value,
       }),
       headers: {
         'Content-type': 'application/json; charset=UTF-8',
       },
     })
     const data = await response.json();
-    const updatedNote = {
-      id: id,
-      title: data.title,
-      content: data.body,
-      createdAt: '2023-10-01',
-      updatedAt: new Date().toISOString().slice(0, 10)
-    }
-    emit('update', updatedNote);
+    emit('update', data);
   }
   catch (error) {
     console.error('Error updating note:', error);
@@ -141,13 +127,14 @@ async function handleDelete(id?: String) {
     class="z-1 absolute top-0 right-0 translate-x-[50%] translate-y-[-50%] button rounded-full grid place-items-center size-6 text-xs p-0">
     <i class="fa-solid fa-caret-down"></i>
   </button>
-  <div class="flex flex-col gap-5 justify-between h-full p-4 relative" @click="showDetail = true" @focusin="showDetail = true">
+  <div class="flex flex-col gap-5 justify-between h-full p-4 relative" @click="showDetail = true"
+    @focusin="showDetail = true">
     <form @submit.prevent="handleSubmit" class="h-full">
       <div class="flex gap-2 items-center">
         <!-- title -->
         <input v-model="title" @keydown.enter.prevent="contentEditable?.element?.focus()"
           class="text-xl font-medium outline-none mb-2 flex-1" placeholder="Title" />
-        
+
         <!-- createdAt -->
         <p v-if="note" class="text-gray-600 text-sm">{{ note.createdAt }} <i class="fa-regular fa-calendar-plus"></i>
         </p>
@@ -163,7 +150,8 @@ async function handleDelete(id?: String) {
 
       <div class="ml-auto flex gap-2">
         <!-- save button -->
-        <button v-if="formChanged" type="button" class="button text-pink-500" @click="handleSubmit" :disabled="isSubmitting">
+        <button v-if="formChanged" type="button" class="button text-pink-500" @click="handleSubmit"
+          :disabled="isSubmitting">
           <svg v-if="isSubmitting" class="size-4 animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none"
             viewBox="0 0 24 24">
             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
@@ -175,7 +163,7 @@ async function handleDelete(id?: String) {
         </button>
 
         <!-- delete button -->
-        <button type="button" class="button text-pink-500" @click.stop="handleDelete(note?.id)">
+        <button type="button" class="button text-pink-500" @click.stop="handleDelete(note?.id)" @focusin.stop="">
           <svg v-if="isDeleting" class="size-4 animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none"
             viewBox="0 0 24 24">
             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
