@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { onBeforeUnmount, onMounted, ref, useTemplateRef, watch } from 'vue';
+import { onBeforeUnmount, onMounted, onUnmounted, ref, useTemplateRef, watch } from 'vue';
 import EditableDiv from './EditableDiv.vue';
 import type { Note } from '@/types';
 import { computed } from '@vue/reactivity';
 import config from '@/config';
+import { timeAgo } from '@/utils';
 
 
 const props = defineProps<{
@@ -120,6 +121,28 @@ async function handleDelete(id?: String) {
   isDeleting.value = false;
 }
 
+let intervalId: number;
+
+const updatedAgo = ref(timeAgo(props.note?.updatedAt));
+
+// watch for changes in note's updatedAt property to update the time ago text
+watch(() => props.note?.updatedAt, (newVal) => {
+  if (newVal) {
+    updatedAgo.value = timeAgo(newVal);
+  }
+}, { immediate: true });
+
+// set up an interval to update the time ago text every minute
+onMounted(() => {
+  intervalId = setInterval(() => {
+    if (props.note) updatedAgo.value = timeAgo(props.note.updatedAt)
+  }, 60000);
+});
+
+onUnmounted(() => {
+  if (intervalId) clearInterval(intervalId);
+});
+
 </script>
 
 <template>
@@ -146,11 +169,11 @@ async function handleDelete(id?: String) {
     <div class="flex items-center">
 
       <!-- updatedAt -->
-      <small v-if="showDetail && note && note.updatedAt" class="text-gray-400">Edited on: {{ note.updatedAt }}</small>
+      <small v-if="showDetail && note && note.updatedAt" class="text-gray-400">Edited {{ updatedAgo }}</small>
 
       <div class="ml-auto flex gap-2">
         <!-- save button -->
-        <button v-if="formChanged" type="button" class="button text-pink-500" @click="handleSubmit"
+        <button v-if="formChanged" type="button" class="button text-pink-500" @click="handleSubmit" @focusin.stop=""
           :disabled="isSubmitting">
           <svg v-if="isSubmitting" class="size-4 animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none"
             viewBox="0 0 24 24">
