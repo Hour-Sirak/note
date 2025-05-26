@@ -50,15 +50,14 @@ const filteredNotes = computed(() => {
   }
 
   // apply filter
-  const now = new Date()
-  const todayStart = new Date(now)
-  todayStart.setHours(0, 0, 0, 0)
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
 
-  const yesterdayStart = new Date(todayStart)
+  const yesterdayStart = new Date(today)
   yesterdayStart.setDate(yesterdayStart.getDate() - 1)
 
-  const weekStart = new Date(todayStart)
-  weekStart.setDate(weekStart.getDate() - todayStart.getDay()) // Sunday start
+  const weekStart = new Date(today)
+  weekStart.setDate(weekStart.getDate() - today.getDay()) // Sunday start
 
   if (filterOption.value) {
     filtered = filtered.filter(note => {
@@ -66,9 +65,9 @@ const filteredNotes = computed(() => {
       const updatedDate = new Date(updatedAt)
 
       if (filterOption.value === 'today') {
-        return updatedDate >= todayStart
+        return updatedDate >= today
       } else if (filterOption.value === 'yesterday') {
-        return updatedDate >= yesterdayStart && updatedDate < todayStart
+        return updatedDate >= yesterdayStart && updatedDate < today
       } else if (filterOption.value === 'thisWeek') {
         return updatedDate >= weekStart
       } else if (filterOption.value === 'old') {
