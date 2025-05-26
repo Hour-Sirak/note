@@ -121,7 +121,7 @@ function reset() {
         <label for="voice-search" class="sr-only">Search</label>
         <div class="relative w-full">
           <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-            <i class="fa-regular fa-note-sticky"></i>
+            <i class="fa-regular fa-note-sticky text-gray-500"></i>
           </div>
           <!-- search bar -->
           <input v-model="searchQuery" type="text"
