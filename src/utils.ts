@@ -1,5 +1,4 @@
 export function timeAgo(dateInput?: string | Date): string {
-  console.log('timeAgo called with:', dateInput);
   if (dateInput === null || dateInput === undefined) {
     return '';
   }

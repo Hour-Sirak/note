@@ -41,10 +41,13 @@ const filteredNotes = computed(() => {
 
   // apply search
   const query = searchQuery.value.toLowerCase()
-  let filtered = notes.value.filter(note =>
-    note?.title.toLowerCase().includes(query) ||
-    note?.content?.toLowerCase().includes(query)
-  )
+  let filtered = notes.value
+  if (query) {
+    filtered = filtered.filter(note =>
+      note?.title.toLowerCase().includes(query) ||
+      note?.content?.toLowerCase().includes(query)
+    )
+  }
 
   // apply filter
   const now = new Date()
@@ -104,17 +107,19 @@ function reset(){
 <template>
   <div class="mt-4">
     <div class="flex items-center justify-between mb-4">
-      <button type="button" class="hover:cursor-pointer"
-        @click="!notes.includes(null) ? notes = [null, ...notes] : null">
-        <i class="fa-regular fa-square-plus text-3xl text-pink-500"></i>
-      </button>
-
-      <div class="flex items-center justify-center gap-2">
+      <div class="flex items-center gap-5">
+        <button type="button" class="hover:cursor-pointer"
+          @click="!notes.includes(null) ? notes = [null, ...notes] : null">
+          <i class="fa-regular fa-square-plus text-3xl text-pink-500"></i>
+        </button>
+        <p class="text-gray-400 font-bold text-xl"><i class="fa-solid fa-hashtag"></i> {{ filteredNotes.length }} </p>
+      </div>
+      <div class="flex items-center justify-center gap-2 text-gray-500">
         <div class="flex items-center min-w-50">
           <label for="voice-search" class="sr-only">Search</label>
           <div class="relative w-full">
             <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-              <i class="text-gray-500 fa-regular fa-note-sticky"></i>
+              <i class="fa-regular fa-note-sticky"></i>
             </div>
             <!-- search bar -->
             <input v-model="searchQuery" type="text"
