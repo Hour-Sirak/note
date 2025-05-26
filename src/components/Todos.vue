@@ -80,7 +80,7 @@ const filteredNotes = computed(() => {
 
   // Sorting
   filtered.sort((a, b) => {
-    if(!a || !b) return 0;
+    if (!a || !b) return 0;
 
     if (sortOption.value === 'titleAsc') {
       return a.title.localeCompare(b.title)
@@ -96,7 +96,7 @@ const filteredNotes = computed(() => {
   return filtered
 })
 
-function reset(){
+function reset() {
   searchQuery.value = ''
   filterOption.value = ''
   sortOption.value = 'newest'
@@ -106,27 +106,30 @@ function reset(){
 
 <template>
   <div class="mt-4">
-    <div class="flex items-center justify-between mb-4">
-      <div class="flex items-center gap-5">
+    <div class="flex flex-wrap sm:flex-nowrap gap-2 mb-4 min-w-80">
+      <div class="flex items-center gap-5 mr-10">
+        <!-- add new note button -->
         <button type="button" class="hover:cursor-pointer"
           @click="!notes.includes(null) ? notes = [null, ...notes] : null">
           <i class="fa-regular fa-square-plus text-3xl text-pink-500"></i>
         </button>
+        <!-- count -->
         <p class="text-gray-400 font-bold text-xl"><i class="fa-solid fa-hashtag"></i> {{ filteredNotes.length }} </p>
       </div>
-      <div class="flex items-center justify-center gap-2 text-gray-500">
-        <div class="flex items-center min-w-50">
-          <label for="voice-search" class="sr-only">Search</label>
-          <div class="relative w-full">
-            <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-              <i class="fa-regular fa-note-sticky"></i>
-            </div>
-            <!-- search bar -->
-            <input v-model="searchQuery" type="text"
-              class="bg-gray-50 border border-gray-300 text-sm rounded-lg block w-full ps-10 p-2.5 focus-visible:outline-gray-300"
-              placeholder="Search notes..." required />
+
+      <div class="flex-1 min-w-30 max-w-40 ml-auto">
+        <label for="voice-search" class="sr-only">Search</label>
+        <div class="relative w-full">
+          <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+            <i class="fa-regular fa-note-sticky"></i>
           </div>
+          <!-- search bar -->
+          <input v-model="searchQuery" type="text"
+            class="bg-gray-50 border border-gray-300 text-sm rounded-lg block w-full ps-10 p-2.5 focus-visible:outline-gray-300"
+            placeholder="Search notes..." required />
         </div>
+      </div>
+      <div class="flex-1 sm:flex-0 flex items-center gap-2 text-gray-500">
 
         <!-- filter by updatedAt -->
         <select v-model="filterOption"
@@ -140,7 +143,7 @@ function reset(){
 
         <!-- sort options -->
         <select v-model="sortOption"
-          class="bg-gray-50 border border-gray-300 text-sm rounded-lg p-2.5 focus-visible:outline-gray-300">
+          class="flex-1 bg-gray-50 border border-gray-300 text-sm rounded-lg p-2.5 focus-visible:outline-gray-300">
           <option value="newest">Newest Created</option>
           <option value="oldest">Oldest Created</option>
           <option value="titleAsc">Title A → Z</option>
@@ -152,7 +155,7 @@ function reset(){
 
     </div>
     <div class="flex flex-col gap-4">
-      <div v-for="note in filteredNotes" :key="note?.id" class="grid rounded shadow relative">
+      <div v-for="note in filteredNotes" :key="note?.id" class="grid rounded shadow relative min-w-[max-content]">
         <Todo :note="note" @delete="deleteNote(note?.id)" @save="saveNote" @update="updateNote" />
       </div>
     </div>
